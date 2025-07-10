@@ -268,10 +268,6 @@ class OnPolicyAlgorithm(BaseAlgorithm):
                 # self.logger.dump(step=self.num_timesteps)
 
             self.train()
-            print("8")
-            self.logger.dump(step=self.num_timesteps)
-            print("9")
-
 
         callback.on_training_end()
 
