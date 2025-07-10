@@ -170,6 +170,7 @@ class PPO(OnPolicyAlgorithm):
         """
         Update policy using the currently gathered rollout buffer.
         """
+        print("0")
         # Switch to train mode (this affects batch norm / dropout)
         self.policy.set_training_mode(True)
         # Update optimizer learning rate
@@ -185,12 +186,16 @@ class PPO(OnPolicyAlgorithm):
         clip_fractions = []
 
         continue_training = True
+        print("1")
 
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
+            print("2")
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
             for rollout_data in self.rollout_buffer.get(self.batch_size):
+                print("3")
+
                 actions = rollout_data.actions
                 if isinstance(self.action_space, spaces.Discrete):
                     # Convert discrete action from float to long
@@ -265,6 +270,7 @@ class PPO(OnPolicyAlgorithm):
                 # Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
+                print("4")
 
             if not continue_training:
                 break
@@ -273,10 +279,12 @@ class PPO(OnPolicyAlgorithm):
         explained_var = explained_variance(self.rollout_buffer.values.flatten(), self.rollout_buffer.returns.flatten())
 
         # Logs
+        print("5")
         self.logger.record("train/entropy_loss", np.mean(entropy_losses))
         self.logger.record("train/policy_gradient_loss", np.mean(pg_losses))
         self.logger.record("train/value_loss", np.mean(value_losses))
         self.logger.record("train/approx_kl", np.mean(approx_kl_divs))
+        print("6")
         self.logger.record("train/clip_fraction", np.mean(clip_fractions))
         self.logger.record("train/loss", loss.item())
         self.logger.record("train/explained_variance", explained_var)
@@ -287,6 +295,7 @@ class PPO(OnPolicyAlgorithm):
         self.logger.record("train/clip_range", clip_range)
         if self.clip_range_vf is not None:
             self.logger.record("train/clip_range_vf", clip_range_vf)
+        print("7")
 
     def learn(
         self,
